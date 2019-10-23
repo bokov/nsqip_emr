@@ -22,7 +22,4 @@ project_seed <- 20191022;
 
 #+ echo=F,eval=F
 # Do not edit below this line
-try(if(!is.null(.localconf<-tidbits:::find_relpath('config.local.R'))){
-  source(.localconf)});
-try(if(!is.null(.relpath<-tidbits:::find_relpath(inputdata))) inputdata<-.relpath[1]);
 c()
