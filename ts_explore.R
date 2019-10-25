@@ -1,10 +1,12 @@
 #' ---
 #' title: "Visualizing Patient Events"
+#' subtitle: "Comparing Dates Across NSQIP and the EMR"
 #' author:
-#' - "Alex F. Bokov^[UT Health San Antonio]"
-#' - "Laura S. Manuel^[UT Health San Antonio]"
-#' - "Meredith N. Zozus^[UT Health San Antonio]"
+#' - name: "Alex F. Bokov^[UT Health San Antonio]"
+#' - name: "Laura S. Manuel^[UT Health San Antonio]"
+#' - name: "Meredith N. Zozus^[UT Health San Antonio]"
 #' date: '`r format(Sys.Date(), "%B %d, %Y")`'
+#' thanks: "Made possible by NIH/NCATS UL1TR001120 (IIMS) and the Long School of Medicine KL2 Award."
 #' abstract: |
 #'   Exploration of event dates in Sunrise EMR vs NSQIP Registry data. Here we
 #'   present histograms of event frequencies ([**fig. 1**](#fig:eventdist00), 
