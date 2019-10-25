@@ -1,0 +1,23 @@
+Imports:
+  GGally,
+  tableone,
+  pander,
+  dplyr,
+  ggplot2,
+  tidyr,
+  data.table,
+  scales,
+  markdown,
+  survival,
+  dummies,
+  stringi,
+  broom,
+  RCurl,
+  readr,
+  XML
+Remotes:
+  bokov/rio
+  bokov/trailR
+  bokov/tidbits
+
+
