@@ -16,8 +16,8 @@ Imports:
   readr,
   XML
 Remotes:
-  bokov/rio
-  bokov/trailR
+  bokov/rio,
+  bokov/trailR,
   bokov/tidbits
 
 
