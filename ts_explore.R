@@ -63,24 +63,27 @@ if(.debug>1) source('./scripts/global.R',chdir=T) else {
 #===========================================================#
 # Your code goes below, content provided only as an example #
 #===========================================================#
+#+ simwarning,eval=basename(inputdata)=='example.csv',results='asis'
+cat("
 
-# Get some aggregate columns for grouping similar timelines
-# dat01rank <- group_by(dat00,CASE_DEID) %>% 
-#   summarize(min=min(c(TIME_TO_EVENT,0),na.rm=TRUE)
-#             ,max=max(c(TIME_TO_EVENT,0),na.rm = TRUE)
-#             ,rng=max-min
-#             ,adm=TIME_TO_EVENT[EVENT=='AdmitDt']
-#             ,dsc=TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP']) %>% 
-#   # rmin amounts to a unique integer id for each case, helpful for tie breaking
-#   arrange(rng) %>% mutate(rmin=seq_len(n()));
-# 
-# # dat01 ----
-# dat01 <- left_join(dat00,dat01rank) %>% 
-#   mutate(src_evt = paste0(SOURCE,'|',EVENT));
-# 
-# dat01a <- subset(dat01,CASE_DEID %in% sample(dat01$CASE_DEID
-#                                         ,getOption('project.sample'
-#                                                    ,1000)));
+**WARNING: This instance of the report was generated using the default
+synthetic dataset `example.csv`. It has the
+correct column names in the correct format, and some statistical similarities
+to the real data, but it is for demonstration and testing only. Do not rely
+on this report to make decisions. If you have access to
+the real data, create a  file named `config.local.R` and set the `inputdata`
+variable to a path leading to the file containing real input data. Then this 
+script _will_ generate a real report.**
+
+...and before you rebuild this report using different `inputdata`, first clear
+the caches like this: 
+
+`unlink(c('*_cache','*_files'),recursive=T)`
+
+***
+
+");
+#' 
 #' How are the various types of events distributed in time? If there are certain
 #' ranges when few events occur, we could trim those off so the analysis can 
 #' run faster.
