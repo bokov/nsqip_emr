@@ -47,8 +47,7 @@
 knitr::opts_chunk$set(echo = .debug>0,warning = .debug>1,message=.debug>2);
 # additional packages to install, if needed. If none needed, should be: ''
 .projpackages <- c('GGally','tableone','pander','dplyr','ggplot2'
-                   ,'tidyr'#,'cluster'
-                   ,'data.table','scales');
+                   ,'tidyr','data.table','scales');
 # name of this script
 .currentscript <- "ts_explore.R"; 
 # other scripts which need to run before this one. If none needed, shoule be: ''
