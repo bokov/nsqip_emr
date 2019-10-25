@@ -1,27 +1,51 @@
 #' ---
 #' title: "Visualizing Patient Events"
 #' author:
-#' - "Alex F. Bokov"
-#' - "Laura S. Manuel"
-#' - "Meredith N. Zozus"
-#' date: "10/22/2019"
+#' - "Alex F. Bokov^[UT Health San Antonio]"
+#' - "Laura S. Manuel^[UT Health San Antonio]"
+#' - "Meredith N. Zozus^[UT Health San Antonio]"
+#' date: '`r format(Sys.Date(), "%B %d, %Y")`'
+#' abstract: |
+#'   Exploration of event dates in Sunrise EMR vs NSQIP Registry data. Here we
+#'   present histograms of event frequencies and timelines to aid in 
+#'   understanding patterns of discrepancies in admission/discharge dates 
+#'   between the two data sources.
+#' css: production.css
+#' fig_caption: yes
+#' linkReferences: true
+#' nameInLink: true
+#' tblLabels: "roman"
+#' tblPrefix: ["table","tables"]
+#' output:
+#'  html_document:
+#'   keep_md: true
+#'   pandoc_args: ["--filter", "pandoc-crossref"]
+#'  word_document:
+#'   reference_docx: 'nt_styletemplate.docx'
+#'   keep_md: true
+#'   pandoc_args: ["--filter", "pandoc-crossref"]
+#'  pdf_document:
+#'   keep_md: true
+#'   pandoc_args: ["--filter", "pandoc-crossref"]
 #' ---
 #' 
 #+ init, message=FALSE,echo=FALSE
 # init -----
 # set to > 0 for verbose initialization
 .debug <- 0;
+knitr::opts_chunk$set(echo = .debug>0,warning = .debug>1,message=.debug>2);
 # additional packages to install, if needed. If none needed, should be: ''
-.projpackages <- c('GGally','tableone','pander','dplyr','ggplot2','readr'
-                   ,'tidyr','dtwclust','data.table');
+.projpackages <- c('GGally','tableone','pander','dplyr','ggplot2'
+                   ,'tidyr'#,'cluster'
+                   ,'data.table','scales');
 # name of this script
 .currentscript <- "ts_explore.R"; 
 # other scripts which need to run before this one. If none needed, shoule be: ''
-.deps <- c( 'dictionary.R' ); 
+.deps <- c( 'ts_dataprep.R' ); 
 
 # load stuff ----
 # load project-wide settings, including your personalized config.R
-if(.debug>0) source('./scripts/global.R',chdir=T) else {
+if(.debug>1) source('./scripts/global.R',chdir=T) else {
   .junk<-capture.output(source('./scripts/global.R',chdir=T,echo=F))};
 
 #+ startcode, echo=F, message=FALSE
@@ -29,70 +53,150 @@ if(.debug>0) source('./scripts/global.R',chdir=T) else {
 # Your code goes below, content provided only as an example #
 #===========================================================#
 
-#' Get some aggregate columns for grouping similar timelines
-dat01rank <- group_by(dat00,CASE_DEID) %>% 
-  summarize(min=min(c(TIME_TO_EVENT,0),na.rm=TRUE)
-            ,max=max(c(TIME_TO_EVENT,0),na.rm = TRUE),rng=max-min) %>% 
-  arrange(rng) %>% mutate(rmin=seq_len(n()));
+# Get some aggregate columns for grouping similar timelines
+# dat01rank <- group_by(dat00,CASE_DEID) %>% 
+#   summarize(min=min(c(TIME_TO_EVENT,0),na.rm=TRUE)
+#             ,max=max(c(TIME_TO_EVENT,0),na.rm = TRUE)
+#             ,rng=max-min
+#             ,adm=TIME_TO_EVENT[EVENT=='AdmitDt']
+#             ,dsc=TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP']) %>% 
+#   # rmin amounts to a unique integer id for each case, helpful for tie breaking
+#   arrange(rng) %>% mutate(rmin=seq_len(n()));
+# 
+# # dat01 ----
+# dat01 <- left_join(dat00,dat01rank) %>% 
+#   mutate(src_evt = paste0(SOURCE,'|',EVENT));
+# 
+# dat01a <- subset(dat01,CASE_DEID %in% sample(dat01$CASE_DEID
+#                                         ,getOption('project.sample'
+#                                                    ,1000)));
+#' How are the various types of events distributed in time? If there are certain
+#' ranges when few events occur, we could trim those off so the analysis can 
+#' run faster.
+#' 
+#' ### Event Distributions
+#' 
+#' ::::: {#fig:eventdist00 custom-style="Image Caption"}
+#+ eventdist00, cache=TRUE, results='asis', warning=.debug>1, fig.width=10
+# eventdist00 ----
+ggplot(na.omit(dat01)
+       ,aes(x=round(TIME_TO_EVENT),fill=paste0(SOURCE,'|',EVENT))) + 
+  geom_bar(position=position_dodge()) + 
+  scale_y_continuous(oob=squish,limits=c(0,length(unique(dat01$CASE_DEID)))) + 
+  xlim(-30,100) + labs(x='Days After Admission') + 
+  guides(fill=guide_legend(title="SOURCE|EVENT")) + 
+  theme(legend.position = c(1,1),legend.justification = c('right','top')
+        ,text=element_text(family="Times New Roman"));
+cat('
 
-dat01 <- left_join(dat00,dat01rank) %>% 
-  mutate(src_evt = paste0(SOURCE,'|',EVENT));
+Distribution of Events Relative to NSQIP Admission Date. Based on this we can trim off events past as early as 100 days for purposes of similarity clustering-- most of the action seems to be within the -60 - 200 day window.');
+#' :::::
+#' 
+#' ***
+#' ###### blank
+#' 
+#' ::::: {#fig:eventdist01 custom-style="Image Caption"}
+#+ eventdist01, cache=TRUE, results='asis', warning=.debug>1, fig.width=10
+# eventdist01 ----
+subset(dat01,!EVENT %in% c('Order:Diagnostic','Order:Medication'
+                           ,'Order:Other')) %>% na.omit %>% 
+  ggplot(aes(x=round(TIME_TO_EVENT),fill=paste0(SOURCE,'|',EVENT))) + 
+  geom_bar(position=position_dodge()) + 
+  scale_y_continuous(oob=squish,limits=c(0,length(unique(dat01$CASE_DEID)))) + 
+  xlim(-30,100) + labs(x='Days After Admission') + 
+  guides(fill=guide_legend(title="SOURCE|EVENT")) +
+  theme(legend.position = c(1,1),legend.justification = c('right','top')
+        ,text=element_text(family="Times New Roman"));
 
-dat01a <- subset(dat01,CASE_DEID %in% sample(dat01$CASE_DEID
-                                        ,getOption('project.sample'
-                                                   ,1000)));
-#' All the distinct days:
-# scaffold <- data.frame(day=seq(min(dat01$TIME_TO_EVENT,na.rm=TRUE)
-#                                ,max(dat01$TIME_TO_EVENT,na.rm=TRUE)));
-.start <- Sys.time();
-scaffold <- expand.grid(TIME_TO_EVENT=seq(min(dat01$TIME_TO_EVENT,na.rm=TRUE)
-                                ,max(dat01$TIME_TO_EVENT,na.rm=TRUE))
-                        ,CASE_DEID=unique(dat01$CASE_DEID)
-                        ,stringsAsFactors = F) %>% as.data.table %>%
-  setkey(CASE_DEID,TIME_TO_EVENT) %>%
-  with_attrs(list(runtime=Sys.time()-.start));
+cat('
 
-#' Another approach: create dummy variables upon which to cluster
-#+ dat02, message=FALSE
+Distribution of Events Relative to NSQIP Admission Date, omitting the most common events (orders)');
+#' 
+#' :::::
+#' 
+#' ***
+#' ### Time Lines
+#' 
+#' ::::: {#fig:allevents00 custom-style="Image Caption"}
+#+ allevents00,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevents00 ----
+.xlim <- c(-60,800); .input <- dat01;
+source('ts_explore_allevents.R',local = TRUE);
+cat('
 
-# split the various source/event combos into separate columns
-.start <- Sys.time();
-dat02 <- model.matrix(~src_evt-1,dat01) %>% `==`(0) %>%
-  cbind(dat01[,c('CASE_DEID','TIME_TO_EVENT')],.) %>% 
-  # use data.table because way too many rows for dplyr to run fast
-  mutate(TIME_TO_EVENT=round(TIME_TO_EVENT)) %>% as.data.table %>% 
-  setkey(CASE_DEID,TIME_TO_EVENT) %>% 
-  # squeeze down into one row per case-time
-  `[`(TRUE,lapply(.SD,any,na.rm=TRUE),by=list(CASE_DEID,TIME_TO_EVENT)) %>%
-  # expand so every combination of case and time is represented 
-  # (various analysis functions will need each to have the same number of 
-  # observations, and aligned in time)
-  `[`(scaffold) %>%
-  with_attrs(list(runtime=Sys.time()-.start));
+ Patient timelines, grouped by similarity with color/shape coded events 
+superimposed. The events were grouped by patient and the vertical axis was
+assigned by ranking criteria in the following order: difference between NSQIP 
+admit date and the admit date in Sunrise (`CV3ClientVisit|AdmitDt`), then
+difference between the earliest event date of any sort and the NSQIP admit date,
+then the NSQIP discharge date (`NSQIP|DischargeDt`), and finally the last event
+of any sort to be recorded. There are pulse-like patterns where timelines are
+longer and longer, then reset back to short timelines. These "pulses" are cases
+that are tied for everything up to and including discharge date, so within each 
+discharge date they are sorted by last event.
+Bright red points represent cases where the Sunrise
+admit date _does not match_ the NSQIP admit date. Salmon-colored points 
+represent events (various types of orders) that _precede_ the NSQIP admit date.
+Orange points are various types of orders that happen after the NSQIP admit 
+date. Purple points represent surgery start (`x`) and end (`+`) times. Since
+this is on the scale of days, they usually coincide so they look like asterisks,
+but in a few cases they occur on different days, and distinct `x` and `+`
+symbols can be distinguished. Finally, various discharge events 
+(`CV3ClientVisit|DischargeDt`, `cv3Order|DischargeOrder`, and 
+`NSQIP|DischargeDt`) are in various shades of green. The NSQIP one is a solid 
+dot, while the other two are hollow triangles. Therefore, when they coincide
+there should be dark green triangles with bright green centers. _When they do
+not coincide, the dark green triangles have a color other than green in their
+centers_. Note: the actual NSQIP admission date is not directly plotted here
+because it exists for every case and in this dataset its value is always 0
+(i.e. it cannot deviate from itself)
 
-# replace NAs created by the join with FALSE
-dat02[is.na(dat02)] <- FALSE;
+');
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' ***
+#' 
+#' ::::: {#fig:allevents01 custom-style="Image Caption"}
+#+ allevents01,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevents01 ----
+.xlim <- c(-30,30);
+source('ts_explore_allevents.R',local = TRUE);
+cat('
 
-# split out into numeric matrices
-dat03 <- split(select(dat02,-CASE_DEID,-TIME_TO_EVENT),dat02$CASE_DEID) %>% 
-  lapply(`+`,0);
-
-#+ multivariate_cluster
-# first strip out the day column and convert back to numeric
-.start <- Sys.time()
-dat03mvc <- tsclust(dat03[1:100],k=4L, distance = "gak", seed = 390,
-                    args = tsclust_args(dist = list(sigma = 100))) %>% 
-  with_attrs(dat03mvc,list(runtime=Sys.time()-.start));
-#' Now turn it into a distance matrix and make a hierarchical cluster
-.start <- Sys.time();
-dat03hc <- hclust(dist(dat03mvc@distmat)) %>% 
-  with_attrs(list(runtime=Sys.time()-.start));
-
+Same data as [@fig:allevents00] but now the time-window narrowed to 30 days
+before or after NSQIP admission date to better see fine detail
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' ###### blank
+#' 
+#' ### Conclusions so Far
+#' 
+#' From [@fig:allevents00] several trends can be noticed. It is common for
+#' orders to precede admission. It is rare but possible for the Sunrise admit
+#' date to deviate from the date recorded in NSQIP in either direction. When the
+#' Sunrise date is earlier than NSQIP's, it almost always comes before any
+#' orders. Sunrise discharge-related dates usually agree with NSQIP's, but when 
+#' they deviate the Sunrise dates always come later. Surgeries trend closer to
+#' admission than discharge. Usually, from admission to discharge there is a
+#' dense stream of orders, close to daily, _and they usually continue after
+#' discharge_ though with a diminished frequency.
+#' 
+#' 
 #+ echo=FALSE,message=FALSE
 #===========================================================#
 ##### End of your code, start of boilerplate code ###########
 #===========================================================#
-knitr::opts_chunk$set(echo = FALSE,warning = FALSE,message=FALSE);
+knitr::opts_chunk$set(echo = FALSE,warning = .debug>1,message=FALSE);
 
 # save out with audit trail 
 message('About to tsave');
@@ -100,7 +204,7 @@ tsave(file=paste0(.currentscript,'.rdata'),list=setdiff(ls(),.origfiles)
       ,verbose=FALSE);
 message('Done tsaving');
 
-#' ### Audit Trail
+# #' ### Audit Trail
 #+ echo=FALSE,results='hide'
 .wt <- walktrail();
 c()
