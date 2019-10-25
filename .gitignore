@@ -29,6 +29,7 @@ vignettes/*.pdf
 # Local configuration
 config.R
 local
+*.local.*
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
 # Other temp files
