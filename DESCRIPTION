@@ -8,6 +8,7 @@ Imports:
   data.table,
   scales,
   markdown,
+  rmarkdown,
   survival,
   dummies,
   stringi,
