@@ -179,7 +179,7 @@ before or after NSQIP admission date to better see fine detail
 #' 
 #' ###### blank
 #' 
-#' ### Conclusions so Far
+#' ### Conclusions So Far
 #' 
 #' From [@fig:allevents00] several trends can be noticed. It is common for
 #' orders to precede admission. It is rare but possible for the Sunrise admit
