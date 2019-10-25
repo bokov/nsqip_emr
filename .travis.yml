@@ -1,10 +1,10 @@
 language: r
-sudo: false
+#sudo: false
 script: make ts_explore
 cache: 
   packages: true
 warnings_are_errors: false
-matrix:
+jobs:
   include:
     - os: linux
       r: oldrel
