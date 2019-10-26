@@ -27,4 +27,5 @@ before_install:
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
     export CFLAGS="-I/usr/local/opt/llvm/include"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cabal install pandoc-crossref; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cabal update && 
+    install pandoc-crossref; fi
