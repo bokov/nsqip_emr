@@ -7,6 +7,7 @@ cache:
   directories:
     - $HOME/.ghc
     - $HOME/.cabal
+    - $HOME/.local
 warnings_are_errors: false
 jobs:
   include:
