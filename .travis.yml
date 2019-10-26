@@ -31,4 +31,4 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -qO- https://get.haskellstack.org/ | sh && 
     git clone https://github.com/lierdakil/pandoc-crossref.git &&
     cd pandoc-crossref && git checkout v0.3.3.0 &&
-    stack install
+    stack install; fi
