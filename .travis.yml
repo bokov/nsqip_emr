@@ -37,5 +37,5 @@ before_install:
     git clone https://github.com/lierdakil/pandoc-crossref.git &&
     cd pandoc-crossref && git checkout v0.3.3.0 &&
     stack install && cd ..; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] then; 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo ln -s $HOME/.local/bin/* /usr/local/bin/; fi
