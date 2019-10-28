@@ -134,7 +134,7 @@ Distribution of Events Relative to NSQIP Admission Date, omitting the most commo
 #+ allevents00,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents00 ----
 .xlim <- c(-60,800); .input <- dat01;
-source('ts_explore_allevents.R',local = TRUE);
+source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
  Patient timelines, grouped by similarity with color/shape coded events 
@@ -176,7 +176,7 @@ because it exists for every case and in this dataset its value is always 0
 #+ allevents01,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents01 ----
 .xlim <- c(-30,30);
-source('ts_explore_allevents.R',local = TRUE);
+source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 Same data as [@fig:allevents00] but now the time-window narrowed to 30 days
