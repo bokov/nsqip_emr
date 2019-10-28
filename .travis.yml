@@ -40,5 +40,5 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo ln -s $HOME/.local/bin/* /usr/local/bin/; fi
 
-after_success:
-  - Rscript -e 'covr::codecov(type="all")'
+#after_success:
+#  - Rscript -e 'covr::codecov(type="all")'
