@@ -47,8 +47,9 @@ dat01rank <- group_by(dat00,CASE_DEID) %>%
   summarize(min=min(c(TIME_TO_EVENT,0),na.rm=TRUE)
             ,max=max(c(TIME_TO_EVENT,0),na.rm = TRUE)
             ,rng=max-min
-            ,adm=TIME_TO_EVENT[EVENT=='AdmitDt']
-            ,dsc=TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP']) %>% 
+            ,nn=n()
+            ,adm=min(TIME_TO_EVENT[EVENT=='AdmitDt'])
+            ,dsc=max(TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP'])) %>% 
   # rmin amounts to a unique integer id for each case, helpful for tie breaking
   arrange(rng) %>% mutate(rmin=seq_len(n())) %>% as.data.table %>% 
   setkey(CASE_DEID);
