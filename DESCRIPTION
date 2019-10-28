@@ -15,7 +15,8 @@ Imports:
   broom,
   RCurl,
   readr,
-  XML
+  XML,
+  covr
 Remotes:
   bokov/rio,
   bokov/trailR,
