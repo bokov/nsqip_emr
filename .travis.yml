@@ -20,8 +20,8 @@ jobs:
     - os: linux
       dist: trusty
       env: R_CODECOV=true
-    - os: osx
-      osx_image: xcode8.3
+    #- os: osx
+    #  osx_image: xcode8.3
 #addons:
 #  homebrew: 
 #    packages: pandoc-crossref
