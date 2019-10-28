@@ -31,8 +31,11 @@ before_install:
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
     export CFLAGS="-I/usr/local/opt/llvm/include"; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -qO- https://get.haskellstack.org/ | sh && 
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && 
+    ! -f $HOME/.local/bin/pandoc-crossref ]]; 
+    then wget -qO- https://get.haskellstack.org/ | sh && 
     git clone https://github.com/lierdakil/pandoc-crossref.git &&
     cd pandoc-crossref && git checkout v0.3.3.0 &&
-    stack install && sudo ln -s /home/travis/.local/bin/* /usr/local/bin/ &&
-    cd .. ; fi
+    stack install && cd ..; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] then; 
+    sudo ln -s $HOME/.local/bin/* /usr/local/bin/; fi
