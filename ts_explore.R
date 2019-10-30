@@ -143,7 +143,7 @@ Distribution of Events Relative to NSQIP Admission Date, omitting the most commo
 # allevents00 ----
 .xlim <- c(-60,800);
 #.input <- dat01;
-.input <- dat01a #%>% mutate(order00=rank(order00))
+.input <- dat01 #%>% mutate(order00=rank(order00))
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
