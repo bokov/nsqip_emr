@@ -49,7 +49,12 @@ dat01rank <- group_by(dat00,CASE_DEID) %>%
             ,rng=max-min
             ,nn=n()
             ,adm=min(TIME_TO_EVENT[EVENT=='AdmitDt'])
-            ,dsc=max(TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP'])) %>% 
+            ,dsc=max(TIME_TO_EVENT[EVENT=='DischargeDt'&SOURCE=='NSQIP'])
+            ,maxpre = max(TIME_TO_EVENT[TIME_TO_EVENT<0 & 
+                                      EVENT=='PreAdmit1|Discharge:INPATIENT'])
+            ,minpost = min(TIME_TO_EVENT[TIME_TO_EVENT>dsc & 
+                                           EVENT=='PostAdmit1|Admit:INPATIENT'])
+            ) %>% 
   # rmin amounts to a unique integer id for each case, helpful for tie breaking
   arrange(rng) %>% mutate(rmin=seq_len(n())) %>% as.data.table %>% 
   setkey(CASE_DEID);
