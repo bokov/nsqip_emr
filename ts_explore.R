@@ -90,36 +90,44 @@ the caches like this:
 #' ### Event Distributions
 #' 
 #' ::::: {#fig:eventdist00 custom-style="Image Caption"}
-#+ eventdist00, cache=TRUE, results='asis', warning=.debug>1, fig.width=10
+#+ eventdist00, cache=TRUE, results='asis', warning=.debug>1, fig.width=10, fig.height=10
 # eventdist00 ----
 ggplot(na.omit(dat01)
-       ,aes(x=round(TIME_TO_EVENT),fill=paste0(SOURCE,'|',EVENT))) + 
+       ,aes(x=round(TIME_TO_EVENT),fill=src_evt)) + 
   geom_bar(position=position_dodge()) + 
-  scale_y_continuous(oob=squish,limits=c(0,length(unique(dat01$CASE_DEID)))) + 
-  xlim(-30,100) + labs(x='Days After Admission') + 
-  guides(fill=guide_legend(title="SOURCE|EVENT")) + 
-  theme(legend.position = c(1,1),legend.justification = c('right','top')
-        ,text=element_text(family="Times New Roman"));
+  scale_y_continuous(oob=squish,limits=c(0,125000)) + 
+  xlim(-20,80) + labs(x='Days After Admission') + 
+  with(dct0,scale_fill_manual(limits=src_evt,values = color)) +
+  guides(fill=guide_legend(title="SOURCE|EVENT"
+                           ,ncol = 2)) + 
+  theme(legend.position = 'bottom',text=element_text(family="Times New Roman"));
 cat('
 
-Distribution of Events Relative to NSQIP Admission Date. Based on this we can trim off events past as early as 100 days for purposes of similarity clustering-- most of the action seems to be within the -60 - 200 day window.');
+Distribution of Events Relative to NSQIP Admission Date. Based on this we can 
+trim off events past as early as 80 days-- most of the action seems to be within
+that window. Please note that the bars are staggered so they can be visually 
+distinguished, therefore a cluster of bars with no gaps separating them 
+represent the same day. Bars only represent different days if there are gaps
+between them.
+    ');
 #' :::::
 #' 
 #' ***
 #' ###### blank
 #' 
 #' ::::: {#fig:eventdist01 custom-style="Image Caption"}
-#+ eventdist01, cache=TRUE, results='asis', warning=.debug>1, fig.width=10
+#+ eventdist01, cache=TRUE, results='asis', warning=.debug>1, fig.width=10, fig.height=10
 # eventdist01 ----
-subset(dat01,!EVENT %in% c('Order:Diagnostic','Order:Medication'
-                           ,'Order:Other')) %>% na.omit %>% 
-  ggplot(aes(x=round(TIME_TO_EVENT),fill=paste0(SOURCE,'|',EVENT))) + 
+subset(dat01,!src_evt %in% v(c_misc)) %>% na.omit %>% 
+  ggplot(aes(x=round(TIME_TO_EVENT),fill=src_evt)) + 
   geom_bar(position=position_dodge()) + 
-  scale_y_continuous(oob=squish,limits=c(0,length(unique(dat01$CASE_DEID)))) + 
-  xlim(-30,100) + labs(x='Days After Admission') + 
-  guides(fill=guide_legend(title="SOURCE|EVENT")) +
-  theme(legend.position = c(1,1),legend.justification = c('right','top')
-        ,text=element_text(family="Times New Roman"));
+  scale_y_continuous(oob=squish,limits=c(0,3000)) + 
+  xlim(-20,80) + labs(x='Days After Admission') + 
+  guides(fill=guide_legend(title="SOURCE|EVENT"
+                           ,ncol = 2)) + 
+  with(subset(dct0,!src_evt %in% v(c_misc))
+       ,scale_fill_manual(limits=src_evt,values = color)) +
+  theme(legend.position = 'bottom',text=element_text(family="Times New Roman"));
 
 cat('
 
@@ -131,9 +139,11 @@ Distribution of Events Relative to NSQIP Admission Date, omitting the most commo
 #' ### Time Lines
 #' 
 #' ::::: {#fig:allevents00 custom-style="Image Caption"}
-#+ allevents00,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+#+ allevents00,cache=FALSE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents00 ----
-.xlim <- c(-60,800); .input <- dat01;
+.xlim <- c(-60,800);
+#.input <- dat01;
+.input <- dat01a #%>% mutate(order00=rank(order00))
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
