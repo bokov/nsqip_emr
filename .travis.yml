@@ -8,6 +8,7 @@ cache:
     - $HOME/.ghc
     - $HOME/.cabal
     - $HOME/.local
+    - $HOME/.stack
 warnings_are_errors: false
 jobs:
   include:
