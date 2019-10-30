@@ -30,6 +30,13 @@ na.strings <- c('NA','','-','(null)');
 #' Your data dictionary file (if/when you have one, uncomment this line)
 #dctfile_raw <- 'WHERE_I_KEEP_MY_DATA/MY_DATA_DICTIONARY.csv';
 
+#' `v` is a special function from the UT Template framework that allows you to
+#' select collections of variables quickly and concisely. The problem is that 
+#' its default arguments may need to vary from project to project (or need to
+#' be set explicitly which defeats the purpose). So here we set the default 
+#' varialbles for this project.
+formals(v)$retcol <- 'src_evt'
+
 #+ echo=F,eval=F
 # Do not edit below this line
 c()
