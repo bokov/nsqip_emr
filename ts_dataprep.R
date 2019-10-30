@@ -78,72 +78,21 @@ dat01 <- as.data.table(dat00) %>% setkey(CASE_DEID) %>% `[`(dat01rank) %>%
 dat01a <- subset(dat01,CASE_DEID %in% sample(dat01$CASE_DEID
                                         ,getOption('project.sample',1000))) %>%
   {(.)[,order01 := rank(order00)]};
-#' 
-#' ### Inactive Code
-#' 
-#' The code from here on down is temporarily kept here in commented-out form 
-#' for convenience, in case I need to go back to using any of it. It will be
-#' deleted in a future clean-up commit.
-#' ***
-#' 
-#' All the distinct days:
-# .start <- Sys.time();
-# scaffold <- expand.grid(TIME_TO_EVENT=seq(min(dat01$TIME_TO_EVENT,na.rm=TRUE)
-#                                 ,max(dat01$TIME_TO_EVENT,na.rm=TRUE))
-#                         ,CASE_DEID=unique(dat01$CASE_DEID)
-#                         ,stringsAsFactors = F) %>% as.data.table %>%
-#   setkey(CASE_DEID,TIME_TO_EVENT) %>%
-#   with_attrs(list(runtime=Sys.time()-.start));
-# 
-#' Another approach: create dummy variables upon which to cluster
-#+ dat02, message=FALSE,cache=TRUE
-# split the various source/event combos into separate columns
-# .start <- Sys.time();
-# dat02 <- model.matrix(~src_evt-1,dat01) %>% `!=`(0) %>%
-#   cbind(dat01[,c('CASE_DEID','TIME_TO_EVENT')],.) %>% 
-#   # use data.table because way too many rows for dplyr to run fast
-#   mutate(TIME_TO_EVENT=round(TIME_TO_EVENT)) %>% as.data.table %>% 
-#   setkey(CASE_DEID,TIME_TO_EVENT) %>% 
-#   # squeeze down into one row per case-time
-#   `[`(TRUE,lapply(.SD,any,na.rm=TRUE),by=list(CASE_DEID,TIME_TO_EVENT)) %>%
-#   # expand so every combination of case and time is represented 
-#   # (various analysis functions will need each to have the same number of 
-#   # observations, and aligned in time)
-#   `[`(scaffold) %>%
-#   with_attrs(list(runtime=Sys.time()-.start));
 
-# replace NAs created by the join with FALSE
-# dat02[is.na(dat02)] <- FALSE;
+if(file.exists('eventmap.csv')){
+  dct0 <- try_import('eventmap.csv');
+  .origfiles <- setdiff(.origfiles,'dct0');
+  } else {
+  stop("
 
-# split out into numeric matrices
-# dat03 <- split(select(dat02,-CASE_DEID,-TIME_TO_EVENT),dat02$CASE_DEID) %>% 
-#   lapply(`+`,0);
-#' 
-#' 
-# overall characteristics of event distributions
-#dat04 <- Reduce(function(xx,yy) xx+yy,dat03);
-# dat04 <- list();
-# for(ii in names(dat03)) dat04[[ii]] <-  apply(dat03[[ii]][42:192,],1,paste0
-#                                               ,collapse='.');
-# dat04 <- do.call(rbind,dat04) %>% as.data.frame;
-# dat04dst <- daisy(dat04); # < 2 min
-# dat04hc <- hclust(dat04dst); 
-# caseorder <- with(dat04hc,data.table(CASE_DEID=labels,order=order)) %>% 
-#   setkey(CASE_DEID);
-# supposedly 0.6 seconds
-#' multivariate_cluster
-# first strip out the day column and convert back to numeric
-# runtimes: 100 = 15.02695s; 200 = 55.73224 s; 400 = 290.2607s; 800 = 1511.716s
-# ...or 25 min
-# .start <- Sys.time()
-# dat03mvc <- tsclust(dat03a[1:400],k=4L, distance = "gak", seed = 390,
-#                     args = tsclust_args(dist = list(sigma = 100))) %>% 
-#   with_attrs(list(runtime=Sys.time()-.start));
-# # Now turn it into a distance matrix and make a hierarchical cluster
-# .start <- Sys.time();
-# dat03hc <- hclust(dist(dat03mvc@distmat)) %>% 
-#   with_attrs(list(runtime=Sys.time()-.start));
+You are missing the file 'eventmap.csv', which is needed for labeling plots.
+You can generate a default one with the following command:
 
+source('rebuild_eventmap.R')
+
+       ");
+}
+#' 
 #+ echo=FALSE,message=FALSE
 #===========================================================#
 ##### End of your code, start of boilerplate code ###########
