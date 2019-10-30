@@ -1,6 +1,6 @@
 language: r
 #sudo: false
-pandoc_version: 2.3
+pandoc_version: 2.7.3
 script: make ts_explore
 cache: 
   packages: true
