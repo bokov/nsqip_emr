@@ -20,6 +20,7 @@ jobs:
       r: devel
     - os: osx
       osx_image: xcode8.3
+      pandoc: false
 #addons:
 #  homebrew: 
 #    packages: pandoc-crossref
