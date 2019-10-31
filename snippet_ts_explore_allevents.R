@@ -1,12 +1,12 @@
 #dat01a[1:40000,] %>% #mutate(order00=rank(order00)) %>%
-.input %>% mutate(order00=rank(order00)) %>%
+.input %>% 
 {ggplot(.,aes(x=TIME_TO_EVENT,y=order00,group=CASE_DEID,shape=src_evt
               ,color=src_evt,size=src_evt)) + 
     geom_line(alpha=0.1,color='black',size=0.5) + 
     geom_point(data=subset((.),src_evt %in% v(c_misc)&
                              TIME_TO_EVENT < .xlim[2] &
                              TIME_TO_EVENT > .xlim[1])
-               ,alpha=0.05) + 
+               ,alpha=0.5) + 
     geom_point(data=subset((.),src_evt %in% v(c_prepst) &
                              TIME_TO_EVENT < .xlim[2] &
                              TIME_TO_EVENT > .xlim[1])
