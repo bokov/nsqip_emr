@@ -222,7 +222,7 @@ before or after NSQIP admission date to better see fine detail
 #' ***
 #' 
 #' ::::: {#fig:allevents02 custom-style="Image Caption"}
-#+ allevents02,cache=FALSE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+#+ allevents02,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents02 ----
 .xlim <- c(-60,800);
 .input <- dat02a;
