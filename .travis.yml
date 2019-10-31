@@ -1,6 +1,6 @@
 language: r
 #sudo: false
-pandoc_version: 2.7.3
+pandoc_version: 2.3
 script: make ts_explore
 cache: 
   packages: true
@@ -25,7 +25,9 @@ jobs:
 #  homebrew: 
 #    packages: pandoc-crossref
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pandoc-crossref &&
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
+    wget -q -O-  https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.3.0/osx-ghc84-pandoc23.tar.gz|tar -xz &&
+    sudo mv pandoc-crossref /usr/local/bin &&
     travis_wait 30 brew install llvm &&
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
