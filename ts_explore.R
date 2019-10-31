@@ -139,11 +139,10 @@ Distribution of Events Relative to NSQIP Admission Date, omitting the most commo
 #' ### Time Lines
 #' 
 #' ::::: {#fig:allevents00 custom-style="Image Caption"}
-#+ allevents00,cache=FALSE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+#+ allevents00,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents00 ----
 .xlim <- c(-60,800);
-#.input <- dat01;
-.input <- dat01 #%>% mutate(order00=rank(order00))
+.input <- dat01a 
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
@@ -202,8 +201,6 @@ before or after NSQIP admission date to better see fine detail
 #' 
 #' ###### blank
 #' 
-#' ### Conclusions So Far
-#' 
 #' From [@fig:allevents00] several trends can be noticed. It is common for
 #' orders to precede admission. It is rare but possible for the Sunrise admit
 #' date to deviate from the date recorded in NSQIP in either direction. When the
@@ -214,6 +211,37 @@ before or after NSQIP admission date to better see fine detail
 #' dense stream of orders, close to daily, _and they usually continue after
 #' discharge_ though with a diminished frequency.
 #' 
+#' But these timelines can include multiple admissions and discharges to either 
+#' side of the interval reported in NSQIP. What if the events before the 
+#' last discharge before the NSQIP index stay and after the first admission 
+#' after the NSQIP index stay were trimmed off? Will any further trends become
+#' noticeable?
+#'
+#' ###### blank
+#' 
+#' ***
+#' 
+#' ::::: {#fig:allevents02 custom-style="Image Caption"}
+#+ allevents02,cache=FALSE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevents02 ----
+.xlim <- c(-60,800);
+.input <- dat02a;
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Same data as [@fig:allevents00] but showing only the events surrounding the
+index NSQIP stay that happened after the previous discharge and before the next
+readmission (if any)
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' ###### blank
 #' 
 #+ echo=FALSE,message=FALSE
 #===========================================================#
