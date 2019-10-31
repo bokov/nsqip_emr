@@ -26,7 +26,7 @@ jobs:
 #    packages: pandoc-crossref
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pandoc-crossref &&
-    brew install llvm &&
+    travis_wait 30 brew install llvm &&
     export PATH="/usr/local/opt/llvm/bin:$PATH" &&
     export LDFLAGS="-L/usr/local/opt/llvm/lib" &&
     export CFLAGS="-I/usr/local/opt/llvm/include"; fi
