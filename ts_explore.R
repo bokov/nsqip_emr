@@ -268,7 +268,7 @@ before or after NSQIP admission date to better see fine detail
 #+ allevents02,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents02 ----
 .xlim <- c(-200,800);
-.input <- dat02a;
+.input <- dat02;
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
@@ -288,7 +288,7 @@ last available event of any type
 #' ::::: {#fig:allevents03 custom-style="Image Caption"}
 #+ allevents03,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
 # allevents03 ----
-.xlim <- c(-30,30);
+.xlim <- c(-30,30 );
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
