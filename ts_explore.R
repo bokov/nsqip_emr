@@ -260,7 +260,8 @@ before or after NSQIP admission date to better see fine detail
 #' Some outpatient discharges can still be seen in [@fig:allevents02] and 
 #' [@fig:allevents03]. This may be because when the next inpatient admit 
 #' _coincides_ with the NSQIP discharge date, those events are counted as not 
-#' having a post-NSQIP admission, so all subsequent events are included.`
+#' having a post-NSQIP admission, so all subsequent events are included. There
+#' are `r dat01qc['chk_readmovrlp']` such cases.
 #' 
 #' ::::: {#fig:allevents02 custom-style="Image Caption"}
 #+ allevents02,cache=TRUE,results='asis',warning=.debug>1,fig.height=20,fig.width=10
