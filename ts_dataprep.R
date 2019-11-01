@@ -91,13 +91,13 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
         ,chk_missingdsc = with_cm(is.infinite(dsc)
                                   ,'Missing NSQIP discharge date')
         ,chk_noadm = with_cm(sum(src_evt=='CV3ClientVisit|AdmitDt')==0
-                            ,'Non-unique EMR index admit date (or none?)')
+                            ,'EMR index admit date missing')
         ,chk_nodsc = with_cm(sum(src_evt=='CV3ClientVisit|DischargeDt')==0
-                            ,'Non-unique EMR index discharge date (or none?)')
+                            ,'EMR index discharge date missing')
         ,chk_multadm = with_cm(sum(src_evt=='CV3ClientVisit|AdmitDt')>1
-                             ,'Non-unique EMR index admit date (or none?)')
+                             ,'Non-unique EMR index admit date')
         ,chk_multdsc = with_cm(sum(src_evt=='CV3ClientVisit|DischargeDt')>1
-                             ,'Non-unique EMR index discharge date (or none?)')
+                             ,'Non-unique EMR index discharge date')
         ,chk_admearly = with_cm(adm<0,'EMR admit date before NSQIP admit')
         ,chk_admlate = with_cm(adm>0,'EMR admit date after NSQIP admit')
         ,chk_sumpredsc = with_cm(
