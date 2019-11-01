@@ -1,6 +1,14 @@
-#dat01a[1:40000,] %>% #mutate(order00=rank(order00)) %>%
+#' This is a code snippet specifically for plotting the timelines figures in
+#' the main scriport-- too specific to create a function, too lengthy and 
+#' obscure to put inline into the main scriport, and yet used several times with
+#' only minor changes. So it lives in this separate file.
+#' 
+#' **usage:** assign a value to `.input` and then do
+#' `source('snippet_ts_explore_allevents.R',local=T)`
+#' 
+#+ main, eval=FALSE, echo=TRUE
 .input %>% 
-{ggplot(.,aes(x=TIME_TO_EVENT,y=order00,group=CASE_DEID,shape=src_evt
+{ggplot(.,aes(x=TIME_TO_EVENT,y=order.active,group=CASE_DEID,shape=src_evt
               ,color=src_evt,size=src_evt)) + 
     geom_line(alpha=0.1,color='black',size=0.5) + 
     geom_point(data=subset((.),src_evt %in% v(c_misc)&
