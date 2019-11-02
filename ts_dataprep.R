@@ -116,7 +116,7 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
           any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']>dsc)
           ,'EMR index discharge after NSQIP discharge')
         ,chk_dscearly = with_cm(
-          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']>dsc)
+          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']<dsc)
           ,'EMR index discharge before NSQIP discharge')
         ),by = CASE_DEID];
 #' Column names of all the data checks
