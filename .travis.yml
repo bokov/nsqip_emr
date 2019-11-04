@@ -1,7 +1,7 @@
 language: r
 #sudo: false
 pandoc_version: 2.3
-script: make ts_explore
+script: travis_wait 40 make ts_explore
 cache: 
   packages: true
   directories:
