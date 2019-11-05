@@ -37,6 +37,10 @@ na.strings <- c('NA','','-','(null)');
 #' varialbles for this project.
 formals(v)$retcol <- 'src_evt'
 
+#' Project repo
+gitrepo <- 'bokov/nsqip_emr'
+githost <- 'https://github.com/'
+
 #+ echo=F,eval=F
 # Do not edit below this line
 c()
