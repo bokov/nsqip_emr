@@ -68,6 +68,12 @@ the caches like this:
 ");
 # execsummary ----
 .version <- trailR::gitstamp(prod=FALSE);
+if(identical(.version,'TEST_OUTPUT_DO_NOT_USE')||length(.version)==0){
+  .version <- c('master','TEST_OUTPUT_DO_NOT_USE');
+};
+if(tidbits:::git_(sprintf('rev-list --count origin/%s...HEAD',.version[1])
+                  ,intern=T,VERBOSE=F)!=0){
+  .version[2] <- 'TEST_OUTPUT_DO_NOT_USE)'};
 #' # Executive Summary 
 #' 
 #' This is a report for helping visualize the temporal
@@ -83,8 +89,11 @@ the caches like this:
 #' the index admission. The remaining figures plot patient
 #' histories as timelines with the x-axis representing time.
 #' 
-#' **Reproducible Research Notice:** The script for generating
-#' this report can be found in the `sprintf('in the [%2$s commit](%3$s%4$s/tree/%2$s) of the [%4$s](%3$s%4$s) repository\'s *%1$s* branch',.version[1],.version[2],githost,gitrepo)`. 
+#' **Reproducible Analysis Notice:** The script for generating
+#' this report can be found in the `r sprintf('in the [%2$s commit](%3$s%4$s/tree/%2$s) of the [%4$s](%3$s%4$s) repository\'s *%1$s* branch',.version[1],.version[2],githost,gitrepo)`. 
+#' The most current _static_ version of this report can be found on 
+#' https://rpubs.com/bokov/vispatientevents
+#' 
 #' 
 #' # Discrepancies
 #' 
