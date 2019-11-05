@@ -8,9 +8,12 @@
 #' nameInLink: true
 #' tblLabels: "roman"
 #' tblPrefix: ["table","tables"]
+#' css: "report.css"
 #' output:
 #'  html_document:
 #'   keep_md: true
+#'   toc: true
+#'   toc_float: true
 #'   pandoc_args: ["--filter", "pandoc-crossref"]
 #'  word_document:
 #'   reference_docx: 'nt_styletemplate.docx'
@@ -63,6 +66,26 @@ the caches like this:
 ***
 
 ");
+# execsummary ----
+.version <- trailR::gitstamp(prod=FALSE);
+#' # Executive Summary 
+#' 
+#' This is a report for helping visualize the temporal
+#' patterns of EMR events (admits, discharges, and
+#' various orders) relative to the admit date of the index
+#' visit reported in NSQIP, which throughout this report
+#' is set to 0, so that in the plots below, events with
+#' negative time values precede the NSQIP admission date,
+#' events equal to 0 coincide with it, and events with
+#' positive values follow it. Figures [-@fig:eventdist00]
+#' and [-@fig:eventdist01] show the overall frequencies for
+#' various types of events at various times relative to 
+#' the index admission. The remaining figures plot patient
+#' histories as timelines with the x-axis representing time.
+#' 
+#' **Reproducible Research Notice:** The script for generating
+#' this report can be found in the `sprintf('in the [%2$s commit](%3$s%4$s/tree/%2$s) of the [%4$s](%3$s%4$s) repository\'s *%1$s* branch',.version[1],.version[2],githost,gitrepo)`. 
+#' 
 #' # Discrepancies
 #' 
 #' The following is a table counting the number of cases where various issues
@@ -72,7 +95,8 @@ the caches like this:
 # dat01qc ----
 dat01qc %>% 
   {data.frame(Issue=unlist(comments(dat01[,names(.),with=F])),`N Cases`=.)} %>% 
-  pander(justify='right');
+  pander(justify='right',caption='Potential discrepancies identified in the data
+         so far. {#tbl:dat01qc}');
 #' 
 #' # Event Distributions
 #' 
@@ -133,7 +157,7 @@ Distribution of Events Relative to NSQIP Admission Date, omitting the most commo
 #' :::::
 #' 
 #' ***
-#' # Time Lines
+#' # Full Time Lines
 #' 
 #' The plots below are an attempt to visually interpret patterns in patient 
 #' histories by aligning them horizontally on NSQIP admission and vertically 
@@ -208,8 +232,6 @@ before or after NSQIP admission date to better see fine detail
 #' 
 #' ***
 #' 
-#' # Full Timelines
-#' 
 #' From [@fig:allevents00] several trends can be noticed. It is common for
 #' orders to precede admission. It is rare but possible for the Sunrise admit
 #' date to deviate from the date recorded in NSQIP in either direction. When the
@@ -277,6 +299,143 @@ everything before and after the previous and next inpatient admission
 #' 
 #' ###### blank
 #' 
+#' 
+#' ***
+#' 
+#' 
+#' ###### blank
+#' 
+#' # Subsamples
+#' 
+#' In this section are smaller subsets drawn from the above population for 
+#' closer review.
+#' 
+#' ::::: {#fig:allevts150 custom-style="Image Caption"}
+#+ allevts150,cache=TRUE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevts150 ----
+.xlim <- c(-200,800);
+.input <- dat02[CASE_DEID %in% subs$rnd150,][
+  ,`:=`(order00=as.numeric(ordered(order00))
+        ,order01=as.numeric(ordered(order01)))][,order.active:=order01];
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+All data for 150 randomly selected NSQIP cases, to better see individual 
+events
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' 
+#' ###### blank
+#' 
+#' 
+#' ::::: {#fig:allevts150_30d custom-style="Image Caption"}
+#+ allevts150_30d,cache=TRUE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevts150_30d ----
+.xlim <- c(-30,30);
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Like [@fig:allevts150] but only for +/-30 days from NSQIP admission date.
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' ###### blank
+#' 
+#' ::::: {#fig:allevtsany custom-style="Image Caption"}
+#+ allevtsany,cache=TRUE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevtsany ----
+.xlim <- c(-200,800);
+.input <- dat02[CASE_DEID %in% subs$anyprob,][
+  ,`:=`(order00=as.numeric(ordered(order00))
+        ,order01=as.numeric(ordered(order01)))][,order.active:=order01];
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Just the cases where at least one potential data quality issue was discovered
+(`CHK_total` in [@tbl:dat01qc])
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' 
+#' ###### blank
+#' 
+#' 
+#' ::::: {#fig:allevtsany_30d custom-style="Image Caption"}
+#+ allevtsany_30d,cache=TRUE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevtsany_30d ----
+.xlim <- c(-30,30);
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Like [@fig:allevtsany] but only for +/-30 days from NSQIP admission date.
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' ***
+#' 
+#' 
+#' ###### blank
+#' 
+#' ::::: {#fig:allevtsadm custom-style="Image Caption"}
+#+ allevtsadm,cache=FALSE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevtsadm ----
+.xlim <- c(-200,800);
+.input <- dat02[CASE_DEID %in% subs$admit,][
+  ,`:=`(order00=as.numeric(ordered(order00))
+        ,order01=as.numeric(ordered(order01)))][,order.active:=order01];
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Cases where the NSQIP admit date disagrees with the EMR 
+(`chk_admearly` and `chk_admlate` in [@tbl:dat01qc])
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
+#' 
+#' 
+#' ***
+#' 
+#' 
+#' ###### blank
+#' 
+#' 
+#' ::::: {#fig:allevtsadm_30d custom-style="Image Caption"}
+#+ allevtsadm_30d,cache=FALSE ,results='asis',warning=.debug>1,fig.height=20,fig.width=10
+# allevtsadm_30d ----
+.xlim <- c(-30,30);
+source('snippet_ts_explore_allevents.R',local = TRUE);
+cat('
+
+Like [@fig:allevtsadm] but only for +/-30 days from NSQIP admission date.
+')
+#' 
+#' :::::
+#' 
+#' ###### blank
 #' 
 #' ***
 #' 
