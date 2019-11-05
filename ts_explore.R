@@ -68,7 +68,7 @@ the caches like this:
 ");
 #+ execsummary
 # execsummary ----
-.version <- trailR::gitstamp(prod=FALSE);
+.version <- trailR::gitstamp(prod=TRUE);
 if(identical(.version,'TEST_OUTPUT_DO_NOT_USE')||length(.version)==0){
   .version <- c('master','TEST_OUTPUT_DO_NOT_USE');
 };
