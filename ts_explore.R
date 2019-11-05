@@ -66,6 +66,7 @@ the caches like this:
 ***
 
 ");
+#+ execsummary
 # execsummary ----
 .version <- trailR::gitstamp(prod=FALSE);
 if(identical(.version,'TEST_OUTPUT_DO_NOT_USE')||length(.version)==0){
@@ -73,7 +74,7 @@ if(identical(.version,'TEST_OUTPUT_DO_NOT_USE')||length(.version)==0){
 };
 if(tidbits:::git_(sprintf('rev-list --count origin/%s...HEAD',.version[1])
                   ,intern=T,VERBOSE=F)!=0){
-  .version[2] <- 'TEST_OUTPUT_DO_NOT_USE)'};
+  .version[2] <- 'TEST_OUTPUT_DO_NOT_USE'};
 #' # Executive Summary 
 #' 
 #' This is a report for helping visualize the temporal
@@ -90,7 +91,7 @@ if(tidbits:::git_(sprintf('rev-list --count origin/%s...HEAD',.version[1])
 #' histories as timelines with the x-axis representing time.
 #' 
 #' **Reproducible Analysis Notice:** The script for generating
-#' this report can be found in the `r sprintf('in the [%2$s commit](%3$s%4$s/tree/%2$s) of the [%4$s](%3$s%4$s) repository\'s *%1$s* branch',.version[1],.version[2],githost,gitrepo)`. 
+#' this report can be found in the `r sprintf('in the [%2$s commit](%3$s%4$s/tree/%2$s) of the [%4$s](%3$s%4$s) repository **%1$s** branch',.version[1],.version[2],githost,gitrepo)`. 
 #' The most current _static_ version of this report can be found on 
 #' https://rpubs.com/bokov/vispatientevents
 #' 
