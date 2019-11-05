@@ -145,6 +145,18 @@ stopifnot(identical(names(dat00)
 #' and order
 stopifnot(all(one2one(dat01,alist(CASE_DEID=order00,CASE_DEID=order01))));
 
+#' Create sub-samples
+#+ subsamples
+# subsamples ----
+set.seed(project_seed);
+subs <- list(rnd150=with_cm(sample(unique(dat01$CASE_DEID),150)
+                           ,'Random sample of 150 cases')
+             ,anyprob=with_cm(unique(dat01[CHK_total>0,CASE_DEID])
+                              ,'Any QC concern (`CHK_total`)')
+             ,admit=with_cm(unique(dat01[chk_admearly|chk_admlate,CASE_DEID])
+                             ,'Mismatch between NSQIP and EMR admit date
+                               (`chk_admearly` or (`chk_admlate`)'));
+
 #' Keep only the events surrounding the NSQIP index stay that happen after the
 #' previous discharge and before the next readmit
 #+ dat02
@@ -161,39 +173,39 @@ stopifnot(all(one2one(dat02,alist(CASE_DEID=order00,CASE_DEID=order01))));
 #' Take a random sample 
 #+ dat01a
 # dat01a ----
-dat01a <- dat01[CASE_DEID %in% sample(dat01$CASE_DEID
-                                      ,getOption('project.sample',1000))
-                ,][# collapse the gaps in the original ranking. Yes, clumsy,
-                   # didn't say I was proud of this...
-                   ,`:=`(order00 = as.numeric(ordered(order00))
-                         ,order01 = as.numeric(ordered(order01)))][
-                           ,order.active := order00];
+# dat01a <- dat01[CASE_DEID %in% sample(dat01$CASE_DEID
+#                                       ,getOption('project.sample',1000))
+#                 ,][# collapse the gaps in the original ranking. Yes, clumsy,
+#                    # didn't say I was proud of this...
+#                    ,`:=`(order00 = as.numeric(ordered(order00))
+#                          ,order01 = as.numeric(ordered(order01)))][
+#                            ,order.active := order00];
 
 #' In all the ordering variables, the unique values must be gap-less
 #' integer sequences equal in length to the number of unique cases
-stopifnot(with(dat01a,all.equal(seq_along(unique(CASE_DEID))
-                                ,sort(unique(order00)))));
-stopifnot(with(dat01a,all.equal(seq_along(unique(CASE_DEID))
-                                ,sort(unique(order01)))));
+# stopifnot(with(dat01a,all.equal(seq_along(unique(CASE_DEID))
+#                                 ,sort(unique(order00)))));
+# stopifnot(with(dat01a,all.equal(seq_along(unique(CASE_DEID))
+#                                 ,sort(unique(order01)))));
 #' And there must be a one-to-one relationship between CASE_DEID
 #' and order
-stopifnot(all(one2one(dat01a,alist(CASE_DEID=order00,CASE_DEID=order01))));
+# stopifnot(all(one2one(dat01a,alist(CASE_DEID=order00,CASE_DEID=order01))));
 
 
 # Keep only the events surrounding the NSQIP index stay that happen after the
 # previous discharge and before the next readmit, for the random sample
 #+ dat02a
 # dat02a ----
-dat02a <- dat01a[TIME_TO_EVENT >= maxpre & TIME_TO_EVENT <= minpost,][
-  ,order.active:=order01];
+# dat02a <- dat01a[TIME_TO_EVENT >= maxpre & TIME_TO_EVENT <= minpost,][
+#   ,order.active:=order01];
 #' In all the ordering variables, the unique values must be gap-less
 #' integer sequences equal in length to the number of unique cases
-stopifnot(with(dat02a,all.equal(seq_along(unique(CASE_DEID))
-                                ,sort(unique(order00)))));
-stopifnot(with(dat02a,all.equal(seq_along(unique(CASE_DEID))
-                                ,sort(unique(order01)))));
+# stopifnot(with(dat02a,all.equal(seq_along(unique(CASE_DEID))
+#                                 ,sort(unique(order00)))));
+# stopifnot(with(dat02a,all.equal(seq_along(unique(CASE_DEID))
+#                                 ,sort(unique(order01)))));
 #' Insure one-to-one relationship as above
-stopifnot(all(one2one(dat01,alist(CASE_DEID=order00,CASE_DEID=order01))));
+# stopifnot(all(one2one(dat01,alist(CASE_DEID=order00,CASE_DEID=order01))));
 
 if(file.exists('eventmap.csv')){
   dct0 <- try_import('eventmap.csv');
