@@ -95,6 +95,8 @@ if(tidbits:::git_(sprintf('rev-list --count origin/%s...HEAD',.version[1])
 #' The most current _static_ version of this report can be found on 
 #' https://rpubs.com/bokov/vispatientevents
 #' 
+#' [![Travis-CI Build Status](https://travis-ci.org/bokov/nsqip_emr.svg?branch=master)](https://travis-ci.org/bokov/nsqip_emr)
+#' 
 #' 
 #' # Discrepancies
 #' 
