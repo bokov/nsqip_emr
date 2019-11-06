@@ -74,8 +74,9 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
     ,rng = max - min), by = CASE_DEID][
       , rngprepost := diff(range(pmax(min, maxpre), pmin(max, minpost)))
       ,by =CASE_DEID][, `:=`(
+        # data checks ----
         chk_readmovrlp = with_cm(min(
-          TIME_TO_EVENT[EVENT == 'PostAdmit1|Admit:INPATIENT']) <= dsc
+          TIME_TO_EVENT[EVENT == 'PostAdmit1|Admit:INPATIENT']) <= min(dsc)
           ,'Post-NSQIP inpatient admits that happen on or before NSQIP discharge')
         ,chk_readscovrlp = with_cm(min(
           TIME_TO_EVENT[EVENT == 'PostAdmit1|Discharge:INPATIENT']) <
@@ -88,6 +89,9 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
           TIME_TO_EVENT[EVENT == 'PreAdmit1|Admit:INPATIENT']) >
             max(TIME_TO_EVENT[EVENT =='PreAdmit1|Discharge:INPATIENT'])
           ,'Pre-NSQIP inpatient admits that happen after their own discharge dates')
+        ,chk_srgpostdsc = with_cm(!is.infinite(dsc) &
+          min(TIME_TO_EVENT[EVENT %in% c('SurgStartTime','SurgEndTime')]) > 
+            min(dsc),'Surgery after NSQIP discharge')
         ,chk_missingdsc = with_cm(is.infinite(dsc)
                                   ,'Missing NSQIP discharge date')
         ,chk_noadm = with_cm(sum(src_evt=='CV3ClientVisit|AdmitDt')==0
@@ -113,10 +117,10 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
           sum(EVENT == 'PostAdmit1|Admit:INPATIENT') >1
           ,'More than one post-NSQIP inpatient admit')
         ,chk_dsclate = with_cm(
-          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']>dsc)
+          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']>min(dsc))
           ,'EMR index discharge after NSQIP discharge')
         ,chk_dscearly = with_cm(
-          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']<dsc)
+          any(TIME_TO_EVENT[src_evt=='CV3ClientVisit|DischargeDt']<min(dsc))
           ,'EMR index discharge before NSQIP discharge')
         ),by = CASE_DEID];
 #' Column names of all the data checks
