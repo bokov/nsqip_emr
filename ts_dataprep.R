@@ -89,9 +89,10 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
           TIME_TO_EVENT[EVENT == 'PreAdmit1|Admit:INPATIENT']) >
             max(TIME_TO_EVENT[EVENT =='PreAdmit1|Discharge:INPATIENT'])
           ,'Pre-NSQIP inpatient admits that happen after their own discharge dates')
-        ,chk_srgpostdsc = with_cm(!is.infinite(dsc) &
-          min(TIME_TO_EVENT[EVENT %in% c('SurgStartTime','SurgEndTime')]) > 
-            min(dsc),'Surgery after NSQIP discharge')
+        ,chk_srgpostdsc = with_cm(
+          !is.infinite(dsc) & 
+            (min(TIME_TO_EVENT[EVENT %in% c('SurgStartTime','SurgEndTime')]) -
+               min(dsc)) > 1,'Surgery after NSQIP discharge')
         ,chk_missingdsc = with_cm(is.infinite(dsc)
                                   ,'Missing NSQIP discharge date')
         ,chk_noadm = with_cm(sum(src_evt=='CV3ClientVisit|AdmitDt')==0
