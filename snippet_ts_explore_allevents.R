@@ -49,6 +49,9 @@
     #guides(color=guide_legend('Discrepancy Type')) +
     theme(axis.text.y=element_blank(),axis.title.y=element_blank()
           ,axis.ticks.y=element_blank()
+          ,panel.grid.major = element_blank()
+          ,panel.grid.minor = element_blank()
+          ,panel.background = element_blank()
           ,text=element_text(family="Times New Roman")
           ,legend.position = 'bottom')
   }
