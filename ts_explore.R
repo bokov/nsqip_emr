@@ -30,7 +30,7 @@
 .debug <- 0;
 knitr::opts_chunk$set(echo = .debug>0,warning = .debug>1,message=.debug>2);
 # additional packages to install, if needed. If none needed, should be: ''
-.projpackages <- c('GGally','tableone','pander','dplyr','ggplot2'
+.projpackages <- c('GGally','tableone','pander','dplyr','ggplot2'#,'ggnewscale'
                    ,'tidyr','data.table','scales');
 # name of this script
 .currentscript <- "ts_explore.R"; 
@@ -46,6 +46,12 @@ if(.debug>1) source('./scripts/global.R',chdir=T) else {
 #===========================================================#
 # Your code goes below, content provided only as an example #
 #===========================================================#
+.linecolcode <- 'Each horizontal line represents one patient, with the 
+color-coded shapes representing various events during their stay. However, the 
+color of the horizontal lines means something different-- it represents what 
+type of discrepancy affects that record. If there are no discrepancies, the line
+is black, if there are more than one, it is red, and otherwise it is color coded
+as per [@tbl:dat01qc]';
 #+ simwarning,eval=basename(inputdata)=='example.csv',results='asis'
 cat("
 
@@ -68,7 +74,7 @@ the caches like this:
 ");
 #+ execsummary
 # execsummary ----
-.version <- trailR::gitstamp(prod=TRUE);
+.version <- trailR::gitstamp(prod=FALSE);
 if(identical(.version,'TEST_OUTPUT_DO_NOT_USE')||length(.version)==0){
   .version <- c('master','TEST_OUTPUT_DO_NOT_USE');
 };
@@ -103,12 +109,15 @@ if(tidbits:::git_(sprintf('rev-list --count origin/%s...HEAD',.version[1])
 #' The following is a table counting the number of cases where various issues
 #' have been observed.
 #' 
+#' 
 #+ dat01qc, results='asis', warning=.debug>1
 # dat01qc ----
 dat01qc %>% 
-  {data.frame(Issue=unlist(comments(dat01[,names(.),with=F])),`N Cases`=.)} %>% 
+  {data.frame(Issue=unlist(comments(dat01[,names(.),with=F]))
+              ,`N Cases`=sprintf('$\\color{%s}{\\text{%s}}$'
+                                 ,c(chk_colors,'FF0000'),.))} %>% 
   pander(justify='right',caption='Potential discrepancies identified in the data
-         so far. {#tbl:dat01qc}');
+         so far. {#tbl:dat01qc}',split.tables=Inf);
 #' 
 #' # Event Distributions
 #' 
@@ -193,7 +202,7 @@ source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 Patient timelines, grouped by similarity with color/shape coded events 
-superimposed. The events were grouped by patient. There are pulse-like patterns 
+superimposed.',.linecolcode,'. There are pulse-like patterns 
 where timelines are longer and longer, then reset back to short timelines. These
 "pulses" are cases that are tied for everything up to and including 
 NSQIP `DischargeDt`, so within each `DischargeDt` they are sorted by last event.
@@ -234,7 +243,9 @@ source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 Same data as [@fig:allevents00] but now the time-window narrowed to 30 days
-before or after NSQIP admission date to better see fine detail
+before or after NSQIP admission date to better see fine detail.
+',.linecolcode,'
+
 ')
 #' 
 #' :::::
@@ -285,7 +296,8 @@ cat('
 Same data as [@fig:allevents00] but showing only the events in between the last
 pre-NSQIP inpatient discharge and first post-NSQIP inpatient admission. In cases 
 where one or both bounds do not exist, those timelines extend to the first or
-last available event of any type
+last available event of any type',.linecolcode,'
+
 ')
 #' 
 #' :::::
@@ -304,8 +316,8 @@ cat('
 
 Same data as [@fig:allevents02] but now the time-window narrowed to 30 days
 before or after NSQIP admission date to better see fine detail. Still excluding
-everything before and after the previous and next inpatient admission
-')
+everything before and after the previous and next inpatient admission.'
+    ,.linecolcode)
 #' 
 #' :::::
 #' 
@@ -333,8 +345,7 @@ source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 All data for 150 randomly selected NSQIP cases, to better see individual 
-events
-')
+events',.linecolcode);
 #' 
 #' :::::
 #' 
@@ -377,7 +388,8 @@ source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 Just the cases where at least one potential data quality issue was discovered
-(`CHK_total` in [@tbl:dat01qc])
+(`CHK_total` in [@tbl:dat01qc]).',.linecolcode,'
+
 ')
 #' 
 #' :::::
@@ -398,7 +410,9 @@ Just the cases where at least one potential data quality issue was discovered
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
-Like [@fig:allevtsany] but only for +/-30 days from NSQIP admission date.
+Like [@fig:allevtsany] but only for +/-30 days from NSQIP admission date.'
+,.linecolcode,'
+
 ')
 #' 
 #' :::::
@@ -421,8 +435,7 @@ source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
 Cases where the NSQIP admit date disagrees with the EMR 
-(`chk_admearly` and `chk_admlate` in [@tbl:dat01qc])
-')
+(`chk_admearly` and `chk_admlate` in [@tbl:dat01qc]).',.linecolcode);
 #' 
 #' :::::
 #' 
@@ -442,8 +455,8 @@ Cases where the NSQIP admit date disagrees with the EMR
 source('snippet_ts_explore_allevents.R',local = TRUE);
 cat('
 
-Like [@fig:allevtsadm] but only for +/-30 days from NSQIP admission date.
-')
+Like [@fig:allevtsadm] but only for +/-30 days from NSQIP admission date.'
+,.linecolcode);
 #' 
 #' :::::
 #' 
