@@ -126,10 +126,16 @@ dat01 <- as.data.table(dat00, key = 'CASE_DEID')[, `:=`(
         ),by = CASE_DEID];
 #' Column names of all the data checks
 chk_cols <- grep('^chk_',names(dat01),val=T);
+chk_colors <- setNames(substr(rainbow(length(chk_cols),start=1/3,end=5/6)
+                     ,start=1,stop = 7),chk_cols);
 #' Total number of things wrong for each case.
 dat01[,CHK_total := with_cm(rowSums(.SD)>0
                             ,'Cases with one or more of the above issues')
       ,.SDcols = chk_cols];
+dat01[,CHK_lncolor:= ifelse(rowSums(.SD)==1
+                            ,apply(.SD,1,function(xx) chk_cols[which.max(xx)])
+                            ,'multi'),.SDcols=chk_cols];
+dat01[CHK_total!=TRUE,CHK_lncolor:='none'];
 #' Sorting columns
 dat01$order00 <- frank(dat01,adm,min,dsc,max,rng,CASE_DEID,ties.method='dense');
 dat01$order01 <- frank(dat01,adm,maxpre,dsc,minpost,rngprepost,CASE_DEID
@@ -223,7 +229,8 @@ You can generate a default one with the following command:
 
 source('rebuild_eventmap.R')
 
-       ");
+...and then edit the resulting 'eventmap.csv' file to have the correct color 
+codes.");
 }
 #' 
 #+ echo=FALSE,message=FALSE
