@@ -13,7 +13,6 @@
 #'  html_document:
 #'   keep_md: true
 #'   toc: true
-#'   toc_float: true
 #'   pandoc_args: ["--filter", "pandoc-crossref"]
 #'  word_document:
 #'   reference_docx: 'nt_styletemplate.docx'
